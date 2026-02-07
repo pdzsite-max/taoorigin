@@ -1,0 +1,297 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/taoorigin/assets/main.css b/taoorigin/assets/main.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..48c04f9369f17fccb82aa71870d4dc963aa3a33b
+--- /dev/null
++++ b/taoorigin/assets/main.css
+@@ -0,0 +1,102 @@
++:root {
++    --text-color: #2f2f2f;
++    --muted-color: #666666;
++    --link-color: #2f5aa8;
++    --border-color: #e5e5e5;
++    --background-color: #ffffff;
++}
++
++* {
++    box-sizing: border-box;
++}
++
++body {
++    margin: 0;
++    padding: 0;
++    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", sans-serif;
++    color: var(--text-color);
++    background: var(--background-color);
++    line-height: 1.7;
++}
++
++a {
++    color: var(--link-color);
++    text-decoration: none;
++}
++
++a:hover {
++    text-decoration: underline;
++}
++
++.site-container {
++    width: 100%;
++    max-width: 760px;
++    margin: 0 auto;
++    padding: 0 20px;
++}
++
++.site-header {
++    padding: 32px 0 24px;
++    border-bottom: 1px solid var(--border-color);
++}
++
++.site-title {
++    font-size: 24px;
++    font-weight: 600;
++}
++
++.site-description {
++    margin-top: 8px;
++    color: var(--muted-color);
++    font-size: 14px;
++}
++
++.site-main {
++    padding: 32px 0 48px;
++}
++
++.page-title,
++.resource-title {
++    margin: 0 0 16px;
++    font-size: 28px;
++    font-weight: 600;
++}
++
++.page-description {
++    margin: 0;
++    color: var(--muted-color);
++}
++
++.page-content,
++.resource-content {
++    font-size: 16px;
++}
++
++.resource-action {
++    margin-top: 32px;
++}
++
++.btn {
++    display: inline-block;
++    padding: 12px 24px;
++    border: 1px solid var(--text-color);
++    color: var(--text-color);
++    font-size: 14px;
++    text-align: center;
++}
++
++.btn:hover {
++    text-decoration: none;
++    background: #f5f5f5;
++}
++
++.site-footer {
++    padding: 24px 0 40px;
++    border-top: 1px solid var(--border-color);
++    color: var(--muted-color);
++    font-size: 13px;
++}
++
++.footer-disclaimer {
++    margin-top: 8px;
++}
+diff --git a/taoorigin/footer.php b/taoorigin/footer.php
+new file mode 100644
+index 0000000000000000000000000000000000000000..ad3405d64e1bb1040384481bdd3c049126954420
+--- /dev/null
++++ b/taoorigin/footer.php
+@@ -0,0 +1,11 @@
++    </main>
++    <footer class="site-footer">
++        <div class="site-container">
++            <div class="footer-meta">© <?php echo esc_html(date('Y')); ?> 道源云 · 资源获取协助平台</div>
++            <div class="footer-disclaimer">本站不存储任何资源，仅提供获取方式与操作指引</div>
++        </div>
++    </footer>
++</div>
++<?php wp_footer(); ?>
++</body>
++</html>
+diff --git a/taoorigin/functions.php b/taoorigin/functions.php
+new file mode 100644
+index 0000000000000000000000000000000000000000..fbf4860db6713b76d3843290920b9069c1ecf14f
+--- /dev/null
++++ b/taoorigin/functions.php
+@@ -0,0 +1,47 @@
++<?php
++
++if (!defined('ABSPATH')) {
++    exit;
++}
++
++function taoorigin_disable_gutenberg($use_block_editor, $post) {
++    return false;
++}
++add_filter('use_block_editor_for_post', 'taoorigin_disable_gutenberg', 10, 2);
++add_filter('use_block_editor_for_post_type', '__return_false', 10);
++
++function taoorigin_disable_comments() {
++    return false;
++}
++add_filter('comments_open', 'taoorigin_disable_comments', 20, 2);
++add_filter('pings_open', 'taoorigin_disable_comments', 20, 2);
++add_filter('comments_array', '__return_empty_array', 10, 2);
++
++function taoorigin_remove_comment_admin_menu() {
++    remove_menu_page('edit-comments.php');
++}
++add_action('admin_menu', 'taoorigin_remove_comment_admin_menu');
++
++function taoorigin_remove_comment_support() {
++    remove_post_type_support('post', 'comments');
++    remove_post_type_support('page', 'comments');
++}
++add_action('init', 'taoorigin_remove_comment_support');
++
++remove_action('wp_head', 'rsd_link');
++remove_action('wp_head', 'wlwmanifest_link');
++remove_action('wp_head', 'wp_generator');
++remove_action('wp_head', 'wp_shortlink_wp_head');
++remove_action('wp_head', 'feed_links', 2);
++remove_action('wp_head', 'feed_links_extra', 3);
++remove_action('wp_head', 'rest_output_link_wp_head');
++remove_action('wp_head', 'wp_oembed_add_discovery_links');
++remove_action('wp_head', 'wp_oembed_add_host_js');
++remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
++
++function taoorigin_dequeue_block_assets() {
++    wp_dequeue_style('wp-block-library');
++    wp_dequeue_style('wp-block-library-theme');
++    wp_dequeue_style('global-styles');
++}
++add_action('wp_enqueue_scripts', 'taoorigin_dequeue_block_assets', 100);
+diff --git a/taoorigin/header.php b/taoorigin/header.php
+new file mode 100644
+index 0000000000000000000000000000000000000000..1df96e270ab092a30a72f727bc7b760b59009dc4
+--- /dev/null
++++ b/taoorigin/header.php
+@@ -0,0 +1,22 @@
++<!doctype html>
++<html <?php language_attributes(); ?>>
++<head>
++    <meta charset="<?php bloginfo('charset'); ?>">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <?php wp_head(); ?>
++</head>
++<body <?php body_class(); ?>>
++<div class="site">
++    <header class="site-header">
++        <div class="site-container">
++            <div class="site-title">
++                <a href="<?php echo esc_url(home_url('/')); ?>">
++                    <?php bloginfo('name'); ?>
++                </a>
++            </div>
++            <div class="site-description">
++                <?php bloginfo('description'); ?>
++            </div>
++        </div>
++    </header>
++    <main class="site-main">
+diff --git a/taoorigin/index.php b/taoorigin/index.php
+new file mode 100644
+index 0000000000000000000000000000000000000000..87c76260f2d1479373e86e71a236c6c193406065
+--- /dev/null
++++ b/taoorigin/index.php
+@@ -0,0 +1,11 @@
++<?php
++get_header();
++?>
++<div class="content">
++    <div class="site-container">
++        <h1 class="page-title"><?php bloginfo('name'); ?></h1>
++        <p class="page-description"><?php bloginfo('description'); ?></p>
++    </div>
++</div>
++<?php
++get_footer();
+diff --git a/taoorigin/page.php b/taoorigin/page.php
+new file mode 100644
+index 0000000000000000000000000000000000000000..b48c5ea060179f286d4f44890f6cf463e6f3636b
+--- /dev/null
++++ b/taoorigin/page.php
+@@ -0,0 +1,19 @@
++<?php
++get_header();
++?>
++<div class="content">
++    <div class="site-container">
++        <?php if (have_posts()) : ?>
++            <?php while (have_posts()) : the_post(); ?>
++                <article <?php post_class('page'); ?>>
++                    <h1 class="page-title"><?php the_title(); ?></h1>
++                    <div class="page-content">
++                        <?php the_content(); ?>
++                    </div>
++                </article>
++            <?php endwhile; ?>
++        <?php endif; ?>
++    </div>
++</div>
++<?php
++get_footer();
+diff --git a/taoorigin/single.php b/taoorigin/single.php
+new file mode 100644
+index 0000000000000000000000000000000000000000..74d03036e495d1529835654186d357180c6ff86b
+--- /dev/null
++++ b/taoorigin/single.php
+@@ -0,0 +1,22 @@
++<?php
++get_header();
++?>
++<div class="content">
++    <div class="site-container">
++        <?php if (have_posts()) : ?>
++            <?php while (have_posts()) : the_post(); ?>
++                <article <?php post_class('resource'); ?>>
++                    <h1 class="resource-title"><?php the_title(); ?></h1>
++                    <div class="resource-content">
++                        <?php the_content(); ?>
++                    </div>
++                    <div class="resource-action">
++                        <a class="btn" href="#">立即获取</a>
++                    </div>
++                </article>
++            <?php endwhile; ?>
++        <?php endif; ?>
++    </div>
++</div>
++<?php
++get_footer();
+diff --git a/taoorigin/style.css b/taoorigin/style.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..3b09e06776142dd04f74b570857e28718d06c0e6
+--- /dev/null
++++ b/taoorigin/style.css
+@@ -0,0 +1,11 @@
++/*
++Theme Name: 道源云
++Theme URI: https://example.com/taoorigin
++Author: DaoOrigin
++Author URI: https://example.com
++Description: 极简工具型资源站主题，专注资源获取与下载协助。
++Version: 1.0.0
++Text Domain: taoorigin
++*/
++
++@import url('assets/main.css');
+ 
+EOF
+)
