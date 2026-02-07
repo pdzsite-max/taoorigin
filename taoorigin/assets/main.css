@@ -1,0 +1,102 @@
+:root {
+    --text-color: #2f2f2f;
+    --muted-color: #666666;
+    --link-color: #2f5aa8;
+    --border-color: #e5e5e5;
+    --background-color: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", sans-serif;
+    color: var(--text-color);
+    background: var(--background-color);
+    line-height: 1.7;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.site-container {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.site-header {
+    padding: 32px 0 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.site-title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.site-description {
+    margin-top: 8px;
+    color: var(--muted-color);
+    font-size: 14px;
+}
+
+.site-main {
+    padding: 32px 0 48px;
+}
+
+.page-title,
+.resource-title {
+    margin: 0 0 16px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.page-description {
+    margin: 0;
+    color: var(--muted-color);
+}
+
+.page-content,
+.resource-content {
+    font-size: 16px;
+}
+
+.resource-action {
+    margin-top: 32px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border: 1px solid var(--text-color);
+    color: var(--text-color);
+    font-size: 14px;
+    text-align: center;
+}
+
+.btn:hover {
+    text-decoration: none;
+    background: #f5f5f5;
+}
+
+.site-footer {
+    padding: 24px 0 40px;
+    border-top: 1px solid var(--border-color);
+    color: var(--muted-color);
+    font-size: 13px;
+}
+
+.footer-disclaimer {
+    margin-top: 8px;
+}
